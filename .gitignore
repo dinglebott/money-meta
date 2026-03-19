@@ -1,0 +1,6 @@
+/.git/
+/.venv3/
+__pycache__/
+/.env
+/.vscode/
+live/
