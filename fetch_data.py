@@ -7,4 +7,5 @@ with open("env.json", "r") as file:
     globalVars = json.load(file)
 yearNow, instrument, granularity, _, _ = globalVars.values()
 
+datafetcher.getDataLoop(datetime(yearNow - 16, 1, 1), datetime(yearNow, 1, 1), instrument, granularity)
 datafetcher.getDataLoop(datetime(yearNow - 2, 1, 1), datetime(yearNow, 1, 1), instrument, granularity)

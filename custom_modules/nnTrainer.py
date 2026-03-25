@@ -1,6 +1,8 @@
+# EXPORTS:
+# nnProbs contains nn predictions for 2024-2026
+# nnTimestamps contains timestamps after dropping lookback rows to align indexes with xgb
 import torch
 from custom_modules import dataparser
-import pandas as pd
 import numpy as np
 import joblib
 import os
@@ -54,12 +56,12 @@ class ForexHybrid(torch.nn.Module):
         return self.fc(lastTimestep) # map to prediction (batch_size, output size)
 
 # GET FEATURES
-filepath = os.path.join("submodels","NN", f"features_v{nnVersion}.json")
+filepath = os.path.join("submodels", "NN", f"features_v{nnVersion}.json")
 with open(filepath, "r") as file:
     featureList = json.load(file)["features"]
 
 # GET PARAMETERS
-filepath = os.path.join("submodels","NN", f"hyperparameters_v{nnVersion}.json")
+filepath = os.path.join("submodels", "NN", f"hyperparameters_v{nnVersion}.json")
 with open(filepath, "r") as file:
     hyperparams = json.load(file)
     params = hyperparams["modelParams"]
@@ -102,6 +104,7 @@ def createSequences(fts, lbls, lookback):
     return np.array(X), np.array(y)
 
 X, y = createSequences(features, labels, lookback)
+nnTimestamps = timestamps[lookback:]
 
 # CONVERT TO TENSORS
 X = torch.tensor(X, dtype=torch.float32, device=device)
@@ -112,7 +115,4 @@ y = torch.tensor(y, dtype=torch.long, device=device)
 # RUN INFERENCES
 with torch.no_grad():
     logits = model(X)
-    probs = torch.argmax(logits, dim=1).cpu().numpy()
-
-# EXPORTS
-nnProbs = pd.DataFrame(probs, columns=["nn_0", "nn_1", "nn_2"])
+    nnProbs = torch.softmax(logits, dim=1).cpu().numpy()
