@@ -17,7 +17,7 @@ The `custom_modules` folder contains helper functions to fetch and manipulate th
 It also contains fully-trained XGBoost and RNN models, and scripts to get leak-free predictions for training the meta-model.
 
 ## How to build a model
-The top-level scripts contain global variables for the current year, the desired instrument, and granularity. I built my model for 2026 EUR/USD at H4 granularity. For other options, set these to the appropriate values.\
+Inside the `env.json` file, set the current year, the desired instrument, and granularity. I built my model for 2026 EUR/USD at H4 granularity. For other options, set these to the appropriate values.\
 #### IMPORTANT:
 You need an OANDA API key to pull historical data (or you can use the data I pulled already).\
 If you have a key, set it as an environment variable `API_KEY` in a local `.env` file.\
@@ -28,4 +28,4 @@ Run `use_model.py`, the prediction and confidence will be printed to the termina
 Remember to set the correct global variables. Obviously make sure you have the correct models trained for your use case first.
 
 ## Why?????
-this better make me some money
+this BETTER make me some money
