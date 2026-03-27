@@ -1,7 +1,7 @@
 from custom_modules import dataparser
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import f1_score, roc_auc_score
+from sklearn.metrics import f1_score, roc_auc_score, confusion_matrix
 import numpy as np
 import pandas as pd
 import joblib
@@ -21,19 +21,21 @@ xgbDf = pd.DataFrame(xgbProbs, index=labels.index, columns=["xgb_0", "xgb_1", "x
 from custom_modules.nnTrainer import nnProbs, nnTimestamps
 nnDf = pd.DataFrame(nnProbs, index=nnTimestamps, columns=["nn_0", "nn_1", "nn_2"])
 
-# SCALE DATA
+# ALIGN DATA
 labelsDf = pd.Series(labels.values, index=labels.index)
 merged = xgbDf.join(nnDf, how="inner").join(labelsDf.rename("label"), how="inner")
 merged.dropna(inplace=True)
 X = merged[["xgb_0", "xgb_2", "nn_0", "nn_2"]].values
 y = merged["label"].values
 
+# SPLIT DATA
 X_train = X[:(len(X)//3)*2]
 X_test = X[(len(X)//3)*2:]
 y_train = y[:(len(y)//3)*2]
 y_test = y[(len(y)//3)*2:]
 print(f"XGB rows: {len(xgbDf)} | NN rows: {len(nnDf)} | Merged rows: {len(merged)}")
 
+# SCALE DATA
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
@@ -55,8 +57,15 @@ probs = model.predict_proba(X_test)
 f1Score = f1_score(y_test, preds, average="macro", zero_division=0)
 trainF1Score = f1_score(y_train, trainPreds, average="macro", zero_division=0)
 rocAucScore = roc_auc_score(y_test, probs, multi_class="ovr", average="macro")
+cmatrix = confusion_matrix(y_test, preds)
+cmatrixDf = pd.DataFrame(cmatrix, index=["Real -", "Real ~", "Real +"], columns=["Pred -", "Pred ~", "Pred +"])
+cmatrixDf["Count"] = cmatrixDf.sum(axis=1)
+cmatrixDf.loc["Count"] = cmatrixDf.sum(axis=0)
 
 # PRINT RESULTS AND SAVE MODEL
 print(f"F1 score (macro-averaged): {f1Score:.4f}")
 print(f"Train F1 score: {trainF1Score:.4f}")
 print(f"ROC-AUC score: {rocAucScore:.4f}")
+
+joblib.dump(model, os.path.join("models", f"metamodel_{instrument}_{granularity}_{yearNow}.pkl"))
+joblib.dump(scaler, os.path.join("models", "metascaler.pkl"))
