@@ -3,7 +3,6 @@
 # labels contains true 0, 1, 2 for each sample
 import xgboost as xgb
 from custom_modules import dataparser
-from datetime import datetime
 import os
 import json
 
@@ -13,10 +12,7 @@ with open("env.json", "r") as file:
 yearNow, instrument, granularity, xgbVersion, _ = globalVars.values()
 
 # LOAD TRAINING DATA
-df = dataparser.parseData(f"json_data/{instrument}_{granularity}_{yearNow - 16}-01-01_{yearNow}-01-01.json")
-dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16, 1, 1), datetime(yearNow - 3, 1, 1))
-dfVal = dataparser.splitByDate(df, datetime(yearNow - 3, 1, 1), datetime(yearNow - 2, 1, 1))
-dfPred = dataparser.splitByDate(df, datetime(yearNow - 2, 1, 1), datetime(yearNow, 1, 1))
+df = dataparser.parseData(f"json_data/{instrument}_{granularity}_{yearNow - 2}-01-01_{yearNow}-01-01.json")
 
 # GET FEATURES
 filepath = os.path.join("submodels", "XGB", f"features_v{xgbVersion}.json")
@@ -31,12 +27,8 @@ params["max_depth"] = int(params["max_depth"])
 params["min_child_weight"] = int(params["min_child_weight"])
 
 # DEFINE DATASETS
-X_train = dfTrain[features]
-y_train = dfTrain["target"]
-X_val = dfVal[features]
-y_val = dfVal["target"]
-X_pred = dfPred[features]
-y_pred = dfPred["target"]
+X = df[features]
+y = df["target"]
 
 # BUILD MODEL
 model = xgb.XGBClassifier(
@@ -48,9 +40,6 @@ model = xgb.XGBClassifier(
     tree_method="hist"
 )
 
-# TRAIN MODEL
-model.fit(X_train, y_train, eval_set=[(X_val, y_val)], verbose=False)
-
 # EXPORTS
-xgbProbs = model.predict_proba(X_pred)
-labels = y_pred
+xgbProbs = model.predict_proba(X)
+labels = y
