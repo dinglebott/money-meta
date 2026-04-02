@@ -1,8 +1,6 @@
-from custom_modules import dataparser
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import f1_score, roc_auc_score, confusion_matrix
-import numpy as np
 import pandas as pd
 import joblib
 import os
@@ -44,9 +42,9 @@ X_test = scaler.transform(X_test)
 
 # TRAIN MODEL
 model = LogisticRegression(
-    C=0.5, # low C = high regularisation (use np.inf for none)
-    max_iter=1000,
+    C=0.1, # low C = high regularisation (use np.inf for none)
     solver="lbfgs",
+    max_iter=1000,
     class_weight="balanced"
 )
 model.fit(X_train, y_train)
