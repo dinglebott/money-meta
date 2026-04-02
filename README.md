@@ -1,22 +1,21 @@
 ## About project
-Goal: Predict the direction of future price movements in forex markets by training a neural network\
-This is part 3 of the whole forex prediction project, where I ensemble the models from parts 1 and 2 with a meta-model. See below for the rest of the project.\
-The meta-model is a simple logistic regressor that synthesises the predictions of the XGBoost and RNN and produces a final prediction.\
+Goal: Predict the direction of future price movements in forex markets with machine learning\
+This is part 3 of the whole forex prediction project, where I deploy the models from parts 1 and 2 in a coherent package. See below for the rest of the project.\
 *See DOCS.md for detailed results and workflow*\
 <br/>
 Part 1: [trading-trees](https://github.com/dinglebott/trading-trees), using a tree-based architecture (XGBoost)\
 Part 2: [noisy-neurons](https://github.com/dinglebott/noisy-neurons), using neural networks (LSTM + CNN)
 
-## Outline of methodology
-Phase 1:
-*See DOCS.md for detailed testing methodology*
+#### IMPORTANT:
+This repo was originally intended to be a meta-model that synthesises probabilities from the XGBoost and LSTM models. However, it SUCKS. So I have repurposed it into a deployment repo that pushes it to a website. Many of the files in the repo are relics of that attempt.
 
 ## Project structure
 The main code is all in the top-level scripts.\
 The `custom_modules` folder contains helper functions to fetch and manipulate the data.\
+`nnTrainer.py`, `xgbTrainer.py`, and `train_model` are deprecated (see explanatory note above)
 It also contains fully-trained XGBoost and RNN models, and scripts to get leak-free predictions for training the meta-model.
 
-## How to build a model
+## How to use
 Inside the `env.json` file, set the current year, the desired instrument, and granularity. I built my model for 2026 EUR/USD at H4 granularity. For other options, set these to the appropriate values.\
 #### IMPORTANT:
 You need an OANDA API key to pull historical data (or you can use the data I pulled already).\

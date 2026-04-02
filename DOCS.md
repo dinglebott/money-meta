@@ -1,4 +1,9 @@
+## READ ME FIRST
+This repo was originally intended to be a meta-model that synthesises probabilities from the XGBoost and LSTM models. However, it SUCKS. So I have repurposed it into a deployment repo that pushes it to a website.\
+The data below is from the attempt at the meta-model.
+
 ## TRAINING DATA
+Model type: Scikit-learn logistic regression
 Outputs of XGB model: xgb_0, xgb_2 (probabilities of down and up moves respectively)
 Outputs of LSTM model: nn_0, nn_2
 
