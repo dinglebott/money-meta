@@ -100,11 +100,11 @@ def createSequences(fts, lbls, lookback):
     X, y = [], []
     for i in range(len(fts) - lookback):
         X.append(fts[i : i + lookback])
-        y.append(lbls[i + lookback])
+        y.append(lbls.iloc[i + lookback])
     return np.array(X), np.array(y)
 
 X, y = createSequences(features, labels, lookback)
-nnTimestamps = timestamps[lookback:]
+nnTimestamps = timestamps[lookback:].str.replace("Z", "", regex=False) # strip timezone for compatibility
 
 # CONVERT TO TENSORS
 X = torch.tensor(X, dtype=torch.float32, device=device)

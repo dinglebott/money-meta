@@ -14,16 +14,19 @@ with open("env.json", "r") as file:
 yearNow, instrument, granularity, _, _ = globalVars.values()
 
 # GET XGBOOST PREDICTIONS
-from custom_modules.xgbTrainer import xgbProbs, labels
-xgbDf = pd.DataFrame(xgbProbs, index=labels.index, columns=["xgb_0", "xgb_1", "xgb_2"])
+from custom_modules.xgbTrainer import xgbProbs, xgbTimestamps, labels
+xgbDf = pd.DataFrame(xgbProbs, index=xgbTimestamps, columns=["xgb_0", "xgb_1", "xgb_2"])
+xgbDf.index = pd.to_datetime(xgbDf.index) # ensure proper datetime format for aligning
 
 # GET RNN PREDICTIONS
 from custom_modules.nnTrainer import nnProbs, nnTimestamps
 nnDf = pd.DataFrame(nnProbs, index=nnTimestamps, columns=["nn_0", "nn_1", "nn_2"])
+nnDf.index = pd.to_datetime(nnDf.index)
 
 # ALIGN DATA
-labelsDf = pd.Series(labels.values, index=labels.index)
+labelsDf = pd.Series(labels.values, index=pd.to_datetime(xgbTimestamps))
 merged = xgbDf.join(nnDf, how="inner").join(labelsDf.rename("label"), how="inner")
+# inner join takes intersection of indexes
 merged.dropna(inplace=True)
 X = merged[["xgb_0", "xgb_2", "nn_0", "nn_2"]].values
 y = merged["label"].values
@@ -33,7 +36,6 @@ X_train = X[:(len(X)//3)*2]
 X_test = X[(len(X)//3)*2:]
 y_train = y[:(len(y)//3)*2]
 y_test = y[(len(y)//3)*2:]
-print(f"XGB rows: {len(xgbDf)} | NN rows: {len(nnDf)} | Merged rows: {len(merged)}")
 
 # SCALE DATA
 scaler = StandardScaler()
@@ -42,9 +44,8 @@ X_test = scaler.transform(X_test)
 
 # TRAIN MODEL
 model = LogisticRegression(
-    C=0.1, # low C = high regularisation
+    C=0.5, # low C = high regularisation (use np.inf for none)
     max_iter=1000,
-    multi_class="multinomial",
     solver="lbfgs",
     class_weight="balanced"
 )
@@ -66,6 +67,7 @@ cmatrixDf.loc["Count"] = cmatrixDf.sum(axis=0)
 print(f"F1 score (macro-averaged): {f1Score:.4f}")
 print(f"Train F1 score: {trainF1Score:.4f}")
 print(f"ROC-AUC score: {rocAucScore:.4f}")
+print(f"Confusion matrix:\n{cmatrixDf}")
 
 joblib.dump(model, os.path.join("models", f"metamodel_{instrument}_{granularity}_{yearNow}.pkl"))
 joblib.dump(scaler, os.path.join("models", "metascaler.pkl"))
