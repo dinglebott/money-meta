@@ -17,36 +17,30 @@ from custom_modules.nnTrainer import nnProbs
 def probabilityDiagnostic(probs, labels, modelName):
     classes = {0: "down", 1: "flat", 2: "up"}
     print(f"\n{modelName} probability distributions:")
-    print("-" * 60)
+    print("-" * 80)
     
     preds = np.argmax(probs, axis=1)
     
-    for trueClass, className in classes.items():
-        mask = labels == trueClass
-        classProbs = probs[mask]
-        classPreds = preds[mask]
+    for trueClass, trueName in classes.items():
+        trueMask = labels == trueClass
         
-        # split into correct and incorrect predictions
-        correctMask = classPreds == trueClass
-        incorrectMask = ~correctMask
-        
-        if correctMask.sum() > 0:
-            avgCorrect = classProbs[correctMask].mean(axis=0)
-            print(f"True={className:<8} {'correct':<8} "
-                  f"P(down)={avgCorrect[0]:.3f}  "
-                  f"P(flat)={avgCorrect[1]:.3f}  "
-                  f"P(up)={avgCorrect[2]:.3f}  "
-                  f"n={correctMask.sum()}")
-        
-        if incorrectMask.sum() > 0:
-            avgIncorrect = classProbs[incorrectMask].mean(axis=0)
-            print(f"True={className:<8} {'wrong':<8} "
-                  f"P(down)={avgIncorrect[0]:.3f}  "
-                  f"P(flat)={avgIncorrect[1]:.3f}  "
-                  f"P(up)={avgIncorrect[2]:.3f}  "
-                  f"n={incorrectMask.sum()}")
+        for predClass, predName in classes.items():
+            # cell (trueClass, predClass) of the confusion matrix
+            cellMask = trueMask & (preds == predClass)
+            n = cellMask.sum()
+            
+            if n == 0:
+                continue
+            
+            avgProbs = probs[cellMask].mean(axis=0)
+            correct = "✓" if trueClass == predClass else "✗"
+            
+            print(f"{correct} True={trueName:<8} Pred={predName:<8} "
+                  f"P(down)={avgProbs[0]:.3f}  "
+                  f"P(flat)={avgProbs[1]:.3f}  "
+                  f"P(up)={avgProbs[2]:.3f}  "
+                  f"n={n}")
         print()
 
-labelsNp = labels.values
-probabilityDiagnostic(xgbProbs, labelsNp, "XGBoost")
-probabilityDiagnostic(nnProbs, labelsNp[20:], "LSTM")
+probabilityDiagnostic(xgbProbs, labels, "XGBoost")
+probabilityDiagnostic(nnProbs, labels[20:], "LSTM")

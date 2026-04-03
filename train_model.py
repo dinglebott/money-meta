@@ -22,7 +22,7 @@ nnDf = pd.DataFrame(nnProbs, index=nnTimestamps, columns=["nn_0", "nn_1", "nn_2"
 nnDf.index = pd.to_datetime(nnDf.index)
 
 # ALIGN DATA
-labelsDf = pd.Series(labels.values, index=pd.to_datetime(xgbTimestamps))
+labelsDf = pd.Series(labels, index=pd.to_datetime(xgbTimestamps))
 merged = xgbDf.join(nnDf, how="inner").join(labelsDf.rename("label"), how="inner")
 # inner join takes intersection of indexes
 merged.dropna(inplace=True)

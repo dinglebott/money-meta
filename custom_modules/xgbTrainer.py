@@ -33,4 +33,4 @@ model.load_model(filepath)
 # EXPORTS
 xgbProbs = model.predict_proba(X)
 xgbTimestamps = timestamps[X.index].str.replace("Z", "", regex=False) # strip timezone for compatibility
-labels = y
+labels = y.values
