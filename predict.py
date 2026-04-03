@@ -126,5 +126,3 @@ print("")
 for idx, prob in enumerate(nnProbs):
     print(f"{getLabel(idx)}: {prob*100:.2f}%")
 print(f"LSTM prediction: {getLabel(nnPred)}")
-
-print(df["rsi_14"].iloc[[-1]])
