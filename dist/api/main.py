@@ -5,7 +5,7 @@ import logging
 
 from api.inference import loadModels, predict
 from api.models import PredictionResponse
-from dist.api.data_processing import getData, parseData
+from api.data_processing import getData, parseData
 
 logger = logging.getLogger(__name__)
 
