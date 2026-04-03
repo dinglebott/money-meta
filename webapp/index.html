@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="TreeTrader" />
-  <link rel="manifest" href="/money-meta/webapp/tree/main/manifest.json" />
+  <link rel="manifest" href="/money-meta/manifest.json" />
   <title>Tree Trader</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
@@ -563,7 +563,7 @@
     // Service worker registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/money-meta/tree/main/webapp/sw.js', { scope: '/money-meta/tree/main/webapp/'}).catch(console.error);
+        navigator.serviceWorker.register('/money-meta/sw.js', { scope: '/money-meta/'}).catch(console.error);
       });
     }
   </script>
