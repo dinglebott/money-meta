@@ -6,11 +6,10 @@ The data at the bottom is from the attempt at the meta-model.\
 ## STRUCTURE AND DEPLOYMENT
 Website: https://dinglebott.github.io/money-meta \
 `dist/`\
-|\
 |--`api/`
 >|--`data-processing.py` - Data-fetching and data-parsing code, also loads API key for OANDA\
 >|--`inference.py` - Functions to load the models and to get their predictions\
->|--`main.py` - Exposes endpoints (/health, /predict, /candle), connects with frontend PWA\
+>|--`main.py` - Exposes endpoints (/health, /predict, /candle), connects with frontend PWA
 
 |--`artifacts/` - Contains models and scaler for neural network\
 |--`Dockerfile` - Contains instructions for Railway to build Docker container\
