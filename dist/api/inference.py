@@ -4,12 +4,42 @@ import xgboost as xgb
 import numpy as np
 from pathlib import Path
 
-from custom_modules.nnTrainer import ForexHybrid  # adjust import path
-
 ARTIFACTS = Path("artifacts")
 CLASSES = ["down", "flat", "up"]
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+class ForexHybrid(torch.nn.Module):
+    def __init__(self, input_size, hidden_size, num_layers, dropout, lstm_dropout, output_size,
+                num_filters, kernel_size):
+        super(ForexHybrid, self).__init__()
+        # CNN layers
+        self.cnn = torch.nn.Sequential(
+            torch.nn.Conv1d(in_channels=input_size, out_channels=num_filters,
+                    kernel_size=kernel_size, padding=kernel_size//2),
+            torch.nn.ReLU(),
+            torch.nn.BatchNorm1d(num_filters),
+            torch.nn.Dropout(dropout)
+        )
+        # LSTM layers
+        self.lstm = torch.nn.LSTM(
+            input_size=num_filters,
+            hidden_size=hidden_size,
+            num_layers=num_layers,
+            batch_first=True,
+            dropout=lstm_dropout if num_layers > 1 else 0
+        )
+        # Output layer
+        self.fc = torch.nn.Linear(hidden_size, output_size)
+    
+    def forward(self, x):
+        # CNN
+        x = x.permute(0, 2, 1)
+        x = self.cnn(x)
+        x = x.permute(0, 2, 1)
+        # LSTM
+        lstmOutput, (hidden, cell) = self.lstm(x)
+        lastTimestep = lstmOutput[:, -1, :]
+        return self.fc(lastTimestep)
+    
 # Loaded once at startup
 xgbModel = None
 nnModel = None
