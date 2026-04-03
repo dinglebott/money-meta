@@ -7,7 +7,7 @@ The data at the bottom is from the attempt at the meta-model.\
 Website: https://dinglebott.github.io/money-meta \
 `dist/`
 |\
-|--`api/`\
+|--`api/`
 >|--`data-processing.py` - Data-fetching and data-parsing code, also loads API key for OANDA\
 >|--`inference.py` - Functions to load the models and to get their predictions\
 >|--`main.py` - Exposes endpoints (/health, /predict, /candle), connects with frontend PWA\
