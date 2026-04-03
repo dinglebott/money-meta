@@ -27,7 +27,7 @@ app = FastAPI(
 # Allow your PWA frontend to call this API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://dinglebott.github.io/money-meta/"],
+    allow_origins=["https://dinglebott.github.io/money-meta"],
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
