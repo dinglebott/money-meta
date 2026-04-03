@@ -482,7 +482,7 @@
 
     function renderProbs(probs) {
       const dirs = ['down', 'flat', 'up'];
-      return dirs.map(dir, idx => {
+      return dirs.map((dir, idx) => {
         const pct = (probs[String(idx)] * 100).toFixed(1);
         return `
           <div class="prob-row">
