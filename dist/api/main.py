@@ -66,16 +66,6 @@ def getPrediction():
 
 @app.get("/candle", response_model=CandleInfo)
 def getCandleInfo():
-    xgbFeatureList = [
-        "adx_direction", "ema_cross", "macd_hist", "bb_width", "bb_position",
-        "smooth_return", "dist_smooth", "upper_wick", "lower_wick", "volatility_regime",
-        "atr_14", "vol_ratio", "vol_return", "dist_ema15"
-    ]
-    nnFeatureList = [
-        "vol_ratio", "volatility_regime", "ema_cross", "upper_wick", "rsi_14",
-        "atr_14", "open_return", "dist_ema15", "lower_wick", "smooth_return",
-        "vol_momentum", "adx_direction", "vol_return", "close_return"
-    ]
     try:
         jsonData, timestamp = getData("EUR_USD", "H4", 500)
         df = parseData(jsonData)
