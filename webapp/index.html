@@ -389,7 +389,7 @@
 
     <!-- Candle section -->
     <div>
-      <div class="section-label">Latest candle</div>
+      <div class="section-label">Latest complete candle</div>
       <div class="candle-card" id="candle-card">
         <div class="empty-state"><p>Press run to fetch data</p></div>
       </div>
@@ -443,6 +443,7 @@
 
     function renderCandle(c) {
       const dt = new Date(c.timestamp);
+      dt.setHours(dt.getHours() - 4) // ignore incomplete candle
       const dtStr = dt.toLocaleString('en-SG', {
         month: 'short', day: 'numeric',
         hour: '2-digit', minute: '2-digit',
@@ -481,8 +482,8 @@
 
     function renderProbs(probs) {
       const dirs = ['down', 'flat', 'up'];
-      return dirs.map(dir => {
-        const pct = (probs[dir] * 100).toFixed(1);
+      return dirs.map(dir, idx => {
+        const pct = (probs[String(idx)] * 100).toFixed(1);
         return `
           <div class="prob-row">
             <span class="prob-dir ${dir}">${dir}</span>
@@ -502,7 +503,7 @@
             <span class="model-name">XGBoost</span>
             <div style="display:flex; align-items:center; gap:8px;">
               <span class="model-ver">v${p.xgbModelVersion}</span>
-              <span class="pred-pill ${p.xgbPred}">${p.xgbPred}</span>
+              <span class="pred-pill ${p.xgbPred}">${["DOWN", "FLAT", "UP"][Number(p.xgbPred)]}</span>
             </div>
           </div>
           <div class="prob-rows">${renderProbs(p.xgbProbs)}</div>
@@ -513,7 +514,7 @@
             <span class="model-name">CNN-LSTM</span>
             <div style="display:flex; align-items:center; gap:8px;">
               <span class="model-ver">v${p.nnModelVersion}</span>
-              <span class="pred-pill ${p.nnPred}">${p.nnPred}</span>
+              <span class="pred-pill ${p.nnPred}">${["DOWN", "FLAT", "UP"][Number(p.nnPred)]}</span>
             </div>
           </div>
           <div class="prob-rows">${renderProbs(p.nnProbs)}</div>
