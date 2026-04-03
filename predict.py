@@ -98,7 +98,7 @@ for i in range(len(features) - nnLookback + 1):
 X = torch.tensor(np.array(X), dtype=torch.float32, device=device)
 # run inferences
 with torch.no_grad():
-    logits = nnModel(X)
+    logits = nnModel(X[-2:])
     allNnProbs = torch.softmax(logits, dim=1).cpu().numpy()
     allNnPreds = torch.argmax(logits, dim=1).cpu().numpy()
 nnProbs = allNnProbs[-1]
