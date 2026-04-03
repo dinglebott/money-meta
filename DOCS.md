@@ -3,8 +3,18 @@ This repo was originally intended to be a meta-model that synthesises probabilit
 The data at the bottom is from the attempt at the meta-model.\
 <br/>
 
-## DEPLOYMENT
-Website:\
+## STRUCTURE AND DEPLOYMENT
+Website: https://dinglebott.github.io/money-meta\
+`dist/`
+|\
+|--`api/`\
+>|--`data-processing.py` - Data-fetching and data-parsing code, also loads API key for OANDA\
+>|--`inference.py` - Functions to load the models and to get their predictions\
+>|--`main.py` - Exposes endpoints (/health, /predict, /candle), connects with frontend PWA\
+|--`artifacts/` - Contains models and scaler for neural network\
+|--`Dockerfile` - Contains instructions for Railway to build Docker container\
+|--`requirements.txt` - Lists dependencies for project to be installed by Dockerfile (torch and torchvision have been excluded, CPU-specific version installed separately in Dockerfile to minimise loading time)\
+`docs/` - Contains the PWA files i.e. `index.html`, as well as the service worker and manifest\
 <br/>
 
 *The following sections are legacy (see explanatory note at the top of the docs)*\
