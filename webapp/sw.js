@@ -1,5 +1,5 @@
 const CACHE_NAME = 'tree-trader-v1';
-const STATIC_ASSETS = ['/money-meta/webapp/', '/money-meta/webapp/index.html', '/money-meta/webapp/manifest.json'];
+const STATIC_ASSETS = ['/money-meta/tree/main/webapp/', '/money-meta/tree/main/webapp/index.html', '/money-meta/tree/main/webapp/manifest.json'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
