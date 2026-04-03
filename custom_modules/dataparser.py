@@ -134,7 +134,11 @@ def parseData(jsonPath):
     df["di_diff"] = df["plus_di"] - df["minus_di"]
     df["adx_direction"] = df["di_diff"] * df["adx"] / 100
 
-    # TARGET VARIABLE
+    # drop empty rows and return
+    df.dropna(inplace=True)
+    return df
+
+def addTarget(df):
     df["forward_return"] = df["close"].shift(-2) - df["close"]
     conditions = [
         df["forward_return"] < -0.001, # downward move
@@ -142,7 +146,7 @@ def parseData(jsonPath):
     ]
     choices = [0, 2]
     df["target"] = np.select(conditions, choices, default=1) # if not up or down, return flat (1)
-
+    
     # drop empty rows and return
     df.dropna(inplace=True)
     return df

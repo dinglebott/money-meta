@@ -14,6 +14,7 @@ yearNow, instrument, granularity, xgbVersion, _ = globalVars.values()
 
 # LOAD TRAINING DATA
 df = dataparser.parseData(f"json_data/{instrument}_{granularity}_{yearNow - 2}-01-01_{yearNow}-01-01.json")
+df = dataparser.addTarget(df)
 timestamps = df["time"]
 
 # GET FEATURES

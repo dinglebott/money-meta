@@ -84,6 +84,7 @@ scaler = joblib.load(filepath)
 
 # PARSE DATA TO PREDICT (val set cos i'm lazy)
 df = dataparser.parseData(os.path.join("json_data", f"{instrument}_{granularity}_{yearNow - 2}-01-01_{yearNow}-01-01.json"))
+df = dataparser.addTarget(df)
 timestamps = df["time"] # separate timestamps to avoid scaling
 df.drop(columns=["time"], inplace=True)
 
