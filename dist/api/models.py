@@ -15,4 +15,4 @@ class CandleInfo(BaseModel):
     low: float
     close: float
     rsi: float
-    timestamp: float
+    timestamp: str
