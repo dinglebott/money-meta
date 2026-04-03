@@ -10,9 +10,9 @@ class PredictionResponse(BaseModel):
     nnModelVersion: str
 
 class CandleInfo(BaseModel):
-    open: str
-    high: str
-    low: str
-    close: str
+    open: float
+    high: float
+    low: float
+    close: float
     rsi: float
-    timestamp: str
+    timestamp: float
