@@ -36,7 +36,7 @@ class ForexHybrid(torch.nn.Module):
         x = self.cnn(x)
         x = x.permute(0, 2, 1)
         # LSTM
-        lstmOutput, (hidden, cell) = self.lstm(x)
+        lstmOutput, _ = self.lstm(x)
         lastTimestep = lstmOutput[:, -1, :]
         return self.fc(lastTimestep)
     
@@ -97,8 +97,8 @@ def predict(xgbFeaturesDf, nnFeaturesDf) -> dict:
     }
 
     return {
-        "xgbPred": xgbPred,
+        "xgbPred": str(int(xgbPred)),
         "xgbProbs": xgbProbsDict,
-        "nnPred": nnPred,
+        "nnPred": str(int(nnPred)),
         "nnProbs": nnProbsDict
     }
