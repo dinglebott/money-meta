@@ -69,13 +69,13 @@ def getCandleInfo():
     try:
         jsonData, timestamp = getData("EUR_USD", "H4", 500)
         df = parseData(jsonData)
-        lastCandle = df.iloc[[-1]]
+        lastCandle = df.iloc[-1]
         return CandleInfo(
-            open=lastCandle["open"],
-            high=lastCandle["high"],
-            low=lastCandle["low"],
-            close=lastCandle["close"],
-            rsi=lastCandle["rsi_14"],
+            open=lastCandle["open"].item(),
+            high=lastCandle["high"].item(),
+            low=lastCandle["low"].item,
+            close=lastCandle["close"].item,
+            rsi=lastCandle["rsi_14"].item,
             timestamp=timestamp
         )
     except Exception as e:
