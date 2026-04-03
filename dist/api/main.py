@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 import logging
 
 from api.inference import loadModels, predict
-from api.models import PredictionResponse
+from api.models import PredictionResponse, CandleInfo
 from api.data_processing import getData, parseData
 
 logger = logging.getLogger(__name__)
@@ -62,4 +62,31 @@ def getPrediction():
         )
     except Exception as e:
         logger.error(f"Prediction failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/candle", response_model=CandleInfo)
+def getCandleInfo():
+    xgbFeatureList = [
+        "adx_direction", "ema_cross", "macd_hist", "bb_width", "bb_position",
+        "smooth_return", "dist_smooth", "upper_wick", "lower_wick", "volatility_regime",
+        "atr_14", "vol_ratio", "vol_return", "dist_ema15"
+    ]
+    nnFeatureList = [
+        "vol_ratio", "volatility_regime", "ema_cross", "upper_wick", "rsi_14",
+        "atr_14", "open_return", "dist_ema15", "lower_wick", "smooth_return",
+        "vol_momentum", "adx_direction", "vol_return", "close_return"
+    ]
+    try:
+        jsonData, timestamp = getData("EUR_USD", "H4", 500)
+        df = parseData(jsonData)
+        return CandleInfo(
+            open=df["open"],
+            high=df["high"],
+            low=df["low"],
+            close=df["close"],
+            rsi=df["rsi_14"],
+            timestamp=timestamp
+        )
+    except Exception as e:
+        logger.error(f"Candle retrieval failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))

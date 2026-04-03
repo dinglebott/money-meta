@@ -8,3 +8,11 @@ class PredictionResponse(BaseModel):
     timestamp: str
     xgbModelVersion: str
     nnModelVersion: str
+
+class CandleInfo(BaseModel):
+    open: float
+    high: float
+    low: float
+    close: float
+    rsi: float
+    timestamp: str
