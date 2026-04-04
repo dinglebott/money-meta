@@ -189,10 +189,10 @@ def parseData(jsonPath):
     swing_highs, swing_lows = detectSwingPoints(df["close"], n=5)
     swing_distances = computeSwingDistances(
         close=df["close"],
-        atr=df["atr_14"],          # your existing ATR column
+        atr=df["atr_14"],
         swing_highs=swing_highs,
         swing_lows=swing_lows,
-        lookback=100,           # ~17 trading days at H4
+        lookback=100
     )
 
     df = pd.concat([df, swing_distances], axis=1)
