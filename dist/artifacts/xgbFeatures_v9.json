@@ -1,0 +1,18 @@
+{
+    "features": [
+        "adx_direction",
+        "ema_cross",
+        "macd_hist",
+        "bb_width",
+        "bb_position",
+        "smooth_return",
+        "dist_smooth",
+        "upper_wick",
+        "lower_wick",
+        "volatility_regime",
+        "atr_14",
+        "vol_ratio",
+        "vol_return",
+        "dist_ema15"
+    ]
+}

@@ -3,10 +3,14 @@ import joblib
 import xgboost as xgb
 import numpy as np
 from pathlib import Path
+import json
 
 ARTIFACTS = Path("artifacts")
 CLASSES = ["down", "flat", "up"]
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+xgbVersion = 9
+nnVersion = 5.2
+
 class ForexHybrid(torch.nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, dropout, lstm_dropout, output_size,
                 num_filters, kernel_size):
@@ -49,22 +53,23 @@ def loadModels():
     global xgbModel, nnModel, scaler
     # load xgb
     xgbModel = xgb.XGBClassifier()
-    xgbModel.load_model(ARTIFACTS / "XGBoost_EUR_USD_H4_2026_v9.json")
+    xgbModel.load_model(ARTIFACTS / f"XGBoost_EUR_USD_H4_2026_v{xgbVersion}.json")
 
     # load nn
+    with open(ARTIFACTS / f"nnFeatures_v{nnVersion}.json", "r") as file:
+        nnFeatures = json.load(file)["features"]
+    with open(ARTIFACTS / f"nnHyperparameters_v{nnVersion}.json", "r") as file:
+        nnHyperparams = json.load(file)["modelParams"]
+    
     nnModel = ForexHybrid(
-        hidden_size=512,
-        num_layers=1,
-        dropout=0.1,
-        num_filters=24,
-        kernel_size=3,
-        input_size=14,
+        **nnHyperparams,
+        input_size=len(nnFeatures),
         output_size=3,
-        lstm_dropout=0.1
+        lstm_dropout=nnHyperparams["dropout"]
     ).to(DEVICE)
-    nnModel.load_state_dict(torch.load(ARTIFACTS / "NN_EUR_USD_H4_2026_v5.2.pth", map_location=DEVICE))
+    nnModel.load_state_dict(torch.load(ARTIFACTS / f"NN_EUR_USD_H4_2026_v{nnVersion}.pth", map_location=DEVICE))
     nnModel.eval()
-    scaler = joblib.load(ARTIFACTS / "scaler_v5.2.pkl")
+    scaler = joblib.load(ARTIFACTS / f"scaler_v{nnVersion}.pkl")
 
 def predict(xgbFeaturesDf, nnFeaturesDf) -> dict:
     # xgb prediction

@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import logging
+from pathlib import Path
+import json
 
 from api.inference import loadModels, predict
 from api.models import PredictionResponse, CandleInfo
@@ -20,7 +22,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Tree Trader Inference API",
-    version="1.0.0",
+    version="1.0.1",
     lifespan=lifespan
 )
 
@@ -32,23 +34,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+ARTIFACTS = Path("artifacts")
+xgbVersion = 9
+nnVersion = 5.2
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
 @app.get("/predict", response_model=PredictionResponse)
 def getPrediction():
-    xgbFeatureList = [
-        "adx_direction", "ema_cross", "macd_hist", "bb_width", "bb_position",
-        "smooth_return", "dist_smooth", "upper_wick", "lower_wick", "volatility_regime",
-        "atr_14", "vol_ratio", "vol_return", "dist_ema15"
-    ]
-    nnFeatureList = [
-        "adx_direction", "ema_cross", "bb_position", "macd_hist", "upper_wick",
-        "lower_wick", "dist_high", "dist_low", "dist_ema15", "rsi_14",
-        "volatility_regime", "bb_width", "atr_14", "vol_ratio", "vol_momentum",
-        "smooth_return", "dist_smooth"
-    ]
+    with open(ARTIFACTS / f"xgbFeatures_v{xgbVersion}.json", "r") as file:
+        xgbFeatureList = json.load(file)["features"]
+    with open(ARTIFACTS / f"nnFeatures_v{nnVersion}.json", "r") as file:
+        nnFeatureList = json.load(file)["features"]
+
     try:
         jsonData, timestamp = getData("EUR_USD", "H4", 500)
         featuresDf = parseData(jsonData)
@@ -58,8 +58,8 @@ def getPrediction():
         return PredictionResponse(
             **result,
             timestamp=timestamp,
-            xgbModelVersion="9",
-            nnModelVersion="5.2"
+            xgbModelVersion=f"{xgbVersion}",
+            nnModelVersion=f"{nnVersion}"
         )
     except Exception as e:
         logger.error(f"Prediction failed: {e}")
