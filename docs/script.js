@@ -67,6 +67,7 @@ function renderCandle(c) {
         <span class="timestamp">${dtStr} - ${endDtStr} SGT</span>
     </div>
     `;
+    console.log(endDt)
 }
 
 function renderProbs(probs) {
