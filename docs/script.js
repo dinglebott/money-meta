@@ -18,7 +18,7 @@ function rsiClass(v) {
 
 function renderCandle(c) {
     const dt = new Date(c.timestamp); // start of candle
-    const endDt = dt
+    var endDt = dt
     endDt = dt.setHours(dt.getHours() + 4) // end of candle
 
     const dtStr = dt.toLocaleString('en-SG', {
