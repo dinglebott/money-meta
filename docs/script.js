@@ -26,13 +26,13 @@ function renderCandle(c) {
         hour: '2-digit', minute: '2-digit',
         hour12: false
     });
-    if (endDt.getDate() == dt.getDate()) {
-        var endDtStr = dt.toLocaleString("en-SG", {
+    if (endDt.getDate() == dt.getDate()) { // skip date and month if same day
+        var endDtStr = endDt.toLocaleString("en-SG", {
             hour: "2-digit", minute: "2-digit",
             hour12: false
         })
     } else {
-        var endDtStr = dt.toLocaleString("en-SG", {
+        var endDtStr = endDt.toLocaleString("en-SG", {
             month: "short", day: "numeric",
             hour: "2-digit", minute: "2-digit",
             hour12: false
@@ -67,7 +67,6 @@ function renderCandle(c) {
         <span class="timestamp">${dtStr} - ${endDtStr} SGT</span>
     </div>
     `;
-    console.log(endDt)
 }
 
 function renderProbs(probs) {
