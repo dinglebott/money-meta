@@ -53,18 +53,18 @@ def loadModels():
 
     # load nn
     nnModel = ForexHybrid(
-        hidden_size=450,
+        hidden_size=512,
         num_layers=1,
-        dropout=0.2597640368702033,
-        num_filters=16,
+        dropout=0.1,
+        num_filters=24,
         kernel_size=3,
         input_size=14,
         output_size=3,
-        lstm_dropout=0.2597640368702033
+        lstm_dropout=0.1
     ).to(DEVICE)
-    nnModel.load_state_dict(torch.load(ARTIFACTS / "NN_EUR_USD_H4_2026_v5.1.pth", map_location=DEVICE))
+    nnModel.load_state_dict(torch.load(ARTIFACTS / "NN_EUR_USD_H4_2026_v5.2.pth", map_location=DEVICE))
     nnModel.eval()
-    scaler = joblib.load(ARTIFACTS / "scaler_v5.1.pkl")
+    scaler = joblib.load(ARTIFACTS / "scaler_v5.2.pkl")
 
 def predict(xgbFeaturesDf, nnFeaturesDf) -> dict:
     # xgb prediction

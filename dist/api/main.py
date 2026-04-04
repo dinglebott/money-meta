@@ -44,9 +44,10 @@ def getPrediction():
         "atr_14", "vol_ratio", "vol_return", "dist_ema15"
     ]
     nnFeatureList = [
-        "vol_ratio", "volatility_regime", "ema_cross", "upper_wick", "rsi_14",
-        "atr_14", "open_return", "dist_ema15", "lower_wick", "smooth_return",
-        "vol_momentum", "adx_direction", "vol_return", "close_return"
+        "adx_direction", "ema_cross", "bb_position", "macd_hist", "upper_wick",
+        "lower_wick", "dist_high", "dist_low", "dist_ema15", "rsi_14",
+        "volatility_regime", "bb_width", "atr_14", "vol_ratio", "vol_momentum",
+        "smooth_return", "dist_smooth"
     ]
     try:
         jsonData, timestamp = getData("EUR_USD", "H4", 500)
@@ -58,7 +59,7 @@ def getPrediction():
             **result,
             timestamp=timestamp,
             xgbModelVersion="9",
-            nnModelVersion="5.1"
+            nnModelVersion="5.2"
         )
     except Exception as e:
         logger.error(f"Prediction failed: {e}")
