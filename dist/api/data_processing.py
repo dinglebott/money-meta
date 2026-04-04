@@ -118,8 +118,8 @@ def parseData(jsonData):
     # RSI
     def rsi(series, n=14):
         delta = series.diff()
-        avgGain = delta.clip(lower=0).rolling(n).mean()
-        avgLoss = (-delta.clip(upper=0)).rolling(n).mean()
+        avgGain = delta.clip(lower=0).ewm(alpha=1/n, min_periods=n, adjust=False).mean()
+        avgLoss = (-delta.clip(upper=0)).ewm(alpha=1/n, min_periods=n, adjust=False).mean()
         relativeStrength = avgGain / avgLoss
         return 100 - (100 / (1 + relativeStrength))
     df["rsi_14"] = rsi(df["close"]) - 50
