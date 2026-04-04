@@ -75,7 +75,7 @@ def getCandleInfo():
             high=lastCandle["high"].item(),
             low=lastCandle["low"].item(),
             close=lastCandle["close"].item(),
-            rsi=lastCandle["rsi_14"].item(),
+            rsi=lastCandle["rsi_14"].item() + 50.0,
             timestamp=timestamp
         )
     except Exception as e:

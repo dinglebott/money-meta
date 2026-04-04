@@ -17,13 +17,27 @@ function rsiClass(v) {
 }
 
 function renderCandle(c) {
-    const dt = new Date(c.timestamp);
-    dt.setHours(dt.getHours() - 4) // ignore incomplete candle
+    const dt = new Date(c.timestamp); // start of candle
+    const endDt = dt
+    endDt = dt.setHours(dt.getHours() + 4) // end of candle
+
     const dtStr = dt.toLocaleString('en-SG', {
-    month: 'short', day: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-    hour12: false
+        month: 'short', day: 'numeric',
+        hour: '2-digit', minute: '2-digit',
+        hour12: false
     });
+    if (endDt.getDate() == dt.getDate()) {
+        var endDtStr = dt.toLocaleString("en-SG", {
+            hour: "2-digit", minute: "2-digit",
+            hour12: false
+        })
+    } else {
+        var endDtStr = dt.toLocaleString("en-SG", {
+            month: "short", day: "numeric",
+            hour: "2-digit", minute: "2-digit",
+            hour12: false
+        })
+    }
     const rsiCls = rsiClass(c.rsi);
 
     candleEl.innerHTML = `
@@ -50,7 +64,7 @@ function renderCandle(c) {
         <span class="rsi-label">RSI-14</span>
         <span class="rsi-val ${rsiCls}">${c.rsi.toFixed(1)}</span>
         </div>
-        <span class="timestamp">${dtStr} SGT</span>
+        <span class="timestamp">${dtStr} - ${endDtStr} SGT</span>
     </div>
     `;
 }

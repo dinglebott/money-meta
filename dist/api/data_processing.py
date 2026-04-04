@@ -30,7 +30,7 @@ def getData(instr="EUR_USD", gran="H1", count=500):
     
     # return response
     data = response.json()
-    timestamp = data["candles"][-1]["time"]
+    timestamp = data["candles"][-1]["time"] if data["candles"][-1]["complete"] else data["candles"][-2]["time"] # timestamp of last complete candle
     return data, timestamp
 
 def ultimateSmoother(series, period=5):
