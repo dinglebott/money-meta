@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Tree Trader Inference API",
-    version="1.0.1",
+    version="1.1.0",
     lifespan=lifespan
 )
 
@@ -36,7 +36,7 @@ app.add_middleware(
 
 ARTIFACTS = Path("artifacts")
 xgbVersion = 9
-nnVersion = 5.2
+nnVersion = 5.3
 
 @app.get("/health")
 def health():

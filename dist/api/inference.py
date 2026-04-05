@@ -9,7 +9,7 @@ ARTIFACTS = Path("artifacts")
 CLASSES = ["down", "flat", "up"]
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 xgbVersion = 9
-nnVersion = 5.2
+nnVersion = 5.3
 
 class ForexHybrid(torch.nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, dropout, lstm_dropout, output_size,

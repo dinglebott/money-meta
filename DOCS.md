@@ -9,12 +9,12 @@ Website: https://dinglebott.github.io/money-meta \
 |--`api/`
 >|--`data-processing.py` - Data-fetching and data-parsing code, also loads API key for OANDA\
 >|--`inference.py` - Functions to load the models and to get their predictions\
->|--`main.py` - Exposes endpoints (/health, /predict, /candle), connects with frontend PWA
+>|--`main.py` - Exposes endpoints (/health, /predict, /candle), connects with frontend website
 
 |--`artifacts/` - Contains models and scaler for neural network\
 |--`Dockerfile` - Contains instructions for Railway to build Docker container\
 |--`requirements.txt` - Lists dependencies for project to be installed by Dockerfile (torch and torchvision have been excluded, CPU-specific version installed separately in Dockerfile to minimise loading time)\
-`docs/` - Contains the PWA files i.e. `index.html`, as well as the service worker and manifest\
+`docs/` - Contains the website files (index, css, js)\
 <br/>
 
 *The following sections are legacy (see explanatory note at the top of the docs)*\

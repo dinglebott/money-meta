@@ -22,6 +22,7 @@ The `docs` folder contains the HTML file and other components for a PWA deployme
 
 ## Setup
 Inside the `env.json` file, set the current year, the desired instrument, and granularity. I built my model for 2026 EUR/USD at H4 granularity. For other options, set these to the appropriate values.\
+When updating model, update the `xgbVersion` and `nnVersion` variables inside `inference.py` and `main.py`. Paste the model files into the `artifacts` directory and rename accordingly.
 #### IMPORTANT:
 You need an OANDA API key to pull historical data (or you can use the data I pulled already).\
 If you have a key, set it as an environment variable `API_KEY` in a local `.env` file.\
