@@ -8,7 +8,7 @@ import json
 ARTIFACTS = Path("artifacts")
 CLASSES = ["down", "flat", "up"]
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-xgbVersion = 9
+xgbVersion = 10
 nnVersion = 5.4
 
 class ForexHybrid(torch.nn.Module):

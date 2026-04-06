@@ -5,6 +5,7 @@ The data at the bottom is from the attempt at the meta-model.\
 
 ## STRUCTURE AND DEPLOYMENT
 Website: https://dinglebott.github.io/money-meta \
+Server API: https://tree-trader.up.railway.app/docs \
 `dist/`\
 |--`api/`
 >|--`data-processing.py` - Data-fetching and data-parsing code, also loads API key for OANDA\
