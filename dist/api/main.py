@@ -25,7 +25,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Tree Trader Inference API",
-    version="1.1.0",
+    version="1.2.0",
     lifespan=lifespan
 )
 
