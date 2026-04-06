@@ -10,6 +10,9 @@ from api.models import PredictionResponse, CandleInfo
 from api.data_processing import getData, parseData
 
 logger = logging.getLogger(__name__)
+ARTIFACTS = Path("artifacts")
+xgbVersion = 10
+nnVersion = 5.4
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -33,10 +36,6 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
-
-ARTIFACTS = Path("artifacts")
-xgbVersion = 9
-nnVersion = 5.3
 
 @app.get("/health")
 def health():
