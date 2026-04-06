@@ -25,7 +25,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Tree Trader Inference API",
-    version="1.3.0",
+    version="1.3.1",
     lifespan=lifespan
 )
 
@@ -74,8 +74,8 @@ def getPrediction():
 def getCandleInfo():
     try:
         jsonData, timestamp = getData("EUR_USD", "H4", 500)
-        df = parseData(jsonData)
-        lastCompleteCandle = df.iloc[-1] if jsonData["candles"][-1]["complete"] else df.iloc[-2]
+        df = parseData(jsonData) # incomplete candle dropped already
+        lastCompleteCandle = df.iloc[-1]
         return CandleInfo(
             open=lastCompleteCandle["open"].item(),
             high=lastCompleteCandle["high"].item(),
