@@ -37,6 +37,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# guard against silent failure
+assert (ARTIFACTS / f"xgbFeatures_v{xgbVersion}.json").exists(), \
+    f"XGB feature list not found for version {xgbVersion}"
+assert (ARTIFACTS / f"nnFeatures_v{nnVersion}.json").exists(), \
+    f"NN feature list not found for version {nnVersion}"
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
