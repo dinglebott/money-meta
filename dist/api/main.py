@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 ARTIFACTS = Path("artifacts")
 xgbVersion = 10
 nnVersion = 5.4
+xgbH1Version = 10.1
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -42,6 +43,8 @@ assert (ARTIFACTS / f"xgbFeatures_v{xgbVersion}.json").exists(), \
     f"XGB feature list not found for version {xgbVersion}"
 assert (ARTIFACTS / f"nnFeatures_v{nnVersion}.json").exists(), \
     f"NN feature list not found for version {nnVersion}"
+assert (ARTIFACTS / f"xgbFeatures_v{xgbH1Version}.json").exists(), \
+    f"XGB feature list not found for version {xgbH1Version}"
 
 @app.get("/health")
 def health():
@@ -53,18 +56,26 @@ def getPrediction():
         xgbFeatureList = json.load(file)["features"]
     with open(ARTIFACTS / f"nnFeatures_v{nnVersion}.json", "r") as file:
         nnFeatureList = json.load(file)["features"]
+    with open(ARTIFACTS / f"xgbFeatures_v{xgbH1Version}.json", "r") as file:
+        xgbH1FeatureList = json.load(file)["features"]
 
     try:
-        jsonData, timestamp = getData("EUR_USD", "H4", 500)
+        jsonData, timestamp = getData("EUR_USD", "H4", 400)
         featuresDf = parseData(jsonData)
         xgbFeaturesDf = featuresDf[xgbFeatureList]
         nnFeaturesDf = featuresDf[nnFeatureList]
-        result = predict(xgbFeaturesDf, nnFeaturesDf)
+
+        jsonDataH1, timestampH1 = getData("EUR_USD", "H1", 400)
+        featuresDfH1 = parseData(jsonDataH1)
+        xgbH1FeaturesDf = featuresDfH1[xgbH1FeatureList]
+
+        result = predict(xgbFeaturesDf, nnFeaturesDf, xgbH1FeaturesDf)
         return PredictionResponse(
             **result,
             timestamp=timestamp,
             xgbModelVersion=f"{xgbVersion}",
-            nnModelVersion=f"{nnVersion}"
+            nnModelVersion=f"{nnVersion}",
+            xgbH1ModelVersion=f"{xgbH1Version}"
         )
     except Exception as e:
         logger.error(f"Prediction failed: {e}")
@@ -73,7 +84,7 @@ def getPrediction():
 @app.get("/candle", response_model=CandleInfo)
 def getCandleInfo():
     try:
-        jsonData, timestamp = getData("EUR_USD", "H4", 500)
+        jsonData, timestamp = getData("EUR_USD", "H4", 400)
         df = parseData(jsonData) # incomplete candle dropped already
         lastCompleteCandle = df.iloc[-1]
         return CandleInfo(
@@ -86,4 +97,22 @@ def getCandleInfo():
         )
     except Exception as e:
         logger.error(f"Candle retrieval failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/candle/h1", response_model=CandleInfo)
+def getCandleInfoH1():
+    try:
+        jsonData, timestamp = getData("EUR_USD", "H1", 500)
+        df = parseData(jsonData)
+        lastCompleteCandle = df.iloc[-1]
+        return CandleInfo(
+            open=lastCompleteCandle["open"].item(),
+            high=lastCompleteCandle["high"].item(),
+            low=lastCompleteCandle["low"].item(),
+            close=lastCompleteCandle["close"].item(),
+            rsi=lastCompleteCandle["rsi_14"].item() + 50.0,
+            timestamp=timestamp
+        )
+    except Exception as e:
+        logger.error(f"Candle H1 retrieval failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,0 +1,23 @@
+{
+    "features": [
+        "adx_direction",
+        "smooth_return",
+        "dist_smooth",
+        "macd_hist",
+        "ema_cross",
+        "vol_momentum",
+        "vol_lag1",
+        "vol_lag2",
+        "close_lag1",
+        "close_lag2",
+        "close_lag3",
+        "close_lag4",
+        "bb_position",
+        "rsi_14",
+        "dist_ema15",
+        "upper_wick",
+        "lower_wick",
+        "dist_high",
+        "dist_low"
+    ]
+}

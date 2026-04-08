@@ -10,6 +10,7 @@ CLASSES = ["down", "flat", "up"]
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 xgbVersion = 10
 nnVersion = 5.4
+xgbH1Version = 10.1
 
 class ForexHybrid(torch.nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, dropout, lstm_dropout, output_size,
@@ -47,13 +48,16 @@ class ForexHybrid(torch.nn.Module):
 # Loaded once at startup
 xgbModel = None
 nnModel = None
+xgbH1Model = None
 scaler = None
 
 def loadModels():
-    global xgbModel, nnModel, scaler
+    global xgbModel, nnModel, xgbH1Model, scaler
     # load xgb
     xgbModel = xgb.XGBClassifier()
     xgbModel.load_model(ARTIFACTS / f"XGBoost_EUR_USD_H4_2026_v{xgbVersion}.json")
+    xgbH1Model = xgb.XGBClassifier()
+    xgbH1Model.load_model(ARTIFACTS / f"XGBoost_EUR_USD_H1_2026_v{xgbH1Version}.json")
 
     # load nn
     with open(ARTIFACTS / f"nnFeatures_v{nnVersion}.json", "r") as file:
@@ -71,7 +75,7 @@ def loadModels():
     nnModel.eval()
     scaler = joblib.load(ARTIFACTS / f"scaler_v{nnVersion}.pkl")
 
-def predict(xgbFeaturesDf, nnFeaturesDf) -> dict:
+def predict(xgbFeaturesDf, nnFeaturesDf, xgbH1FeaturesDf) -> dict:
     # xgb prediction
     latestCandle = xgbFeaturesDf.iloc[[-1]]
     xgbPred = xgbModel.predict(latestCandle)[0]
@@ -101,9 +105,21 @@ def predict(xgbFeaturesDf, nnFeaturesDf) -> dict:
         "2": nnProbs[2]
     }
 
+    # H1 XGBoost prediction
+    latestCandleH1 = xgbH1FeaturesDf.iloc[[-1]]
+    xgbH1Pred = xgbH1Model.predict(latestCandleH1)[0]
+    xgbH1Probs = xgbH1Model.predict_proba(latestCandleH1)[0]
+    xgbH1ProbsDict = {
+        "0": xgbH1Probs[0],
+        "1": xgbH1Probs[1],
+        "2": xgbH1Probs[2]
+    }
+
     return {
         "xgbPred": str(int(xgbPred)),
         "xgbProbs": xgbProbsDict,
         "nnPred": str(int(nnPred)),
-        "nnProbs": nnProbsDict
+        "nnProbs": nnProbsDict,
+        "xgbH1Pred": str(int(xgbH1Pred)),
+        "xgbH1Probs": xgbH1ProbsDict
     }

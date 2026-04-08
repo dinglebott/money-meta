@@ -10,7 +10,8 @@ Server API: https://tree-trader.up.railway.app/docs \
 |--`api/`
 >|--`data-processing.py` - Data-fetching and data-parsing code, also loads API key for OANDA\
 >|--`inference.py` - Functions to load the models and to get their predictions\
->|--`main.py` - Exposes endpoints (/health, /predict, /candle), connects with frontend website
+>|--`main.py` - Exposes endpoints (/health, /predict, /candle), connects with frontend website\
+>|--`models.py` - Contains templates for endpoint responses\
 
 |--`artifacts/` - Contains models and scaler for neural network\
 |--`Dockerfile` - Contains instructions for Railway to build Docker container\

@@ -4,6 +4,7 @@ const btn       = document.getElementById('fetch-btn');
 const statusEl  = document.getElementById('status-text');
 const candleEl  = document.getElementById('candle-card');
 const predEl    = document.getElementById('pred-container');
+const candleH1El = document.getElementById('candle-h1-card');
 
 function setStatus(msg, type = '') {
     statusEl.textContent = msg;
@@ -69,6 +70,48 @@ function renderCandle(c) {
     `;
 }
 
+function renderCandleH1(c) {
+    const dt = new Date(c.timestamp);
+    const endDt = new Date(c.timestamp);
+    endDt.setHours(dt.getHours() + 1); // H1 offset
+
+    const dtStr = dt.toLocaleString('en-SG', {
+        month: 'short', day: 'numeric',
+        hour: '2-digit', minute: '2-digit', hour12: false
+    });
+    const endDtStr = (endDt.getDate() === dt.getDate())
+        ? endDt.toLocaleString('en-SG', { hour: '2-digit', minute: '2-digit', hour12: false })
+        : endDt.toLocaleString('en-SG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
+
+    const rsiCls = rsiClass(c.rsi);
+    candleH1El.innerHTML = `
+    <div class="candle-grid">
+        <div class="candle-item">
+        <div class="candle-label">Open</div>
+        <div class="candle-val">${c.open.toFixed(5)}</div>
+        </div>
+        <div class="candle-item">
+        <div class="candle-label">High</div>
+        <div class="candle-val">${c.high.toFixed(5)}</div>
+        </div>
+        <div class="candle-item">
+        <div class="candle-label">Low</div>
+        <div class="candle-val">${c.low.toFixed(5)}</div>
+        </div>
+        <div class="candle-item">
+        <div class="candle-label">Close</div>
+        <div class="candle-val">${c.close.toFixed(5)}</div>
+        </div>
+    </div>
+    <div class="candle-meta">
+        <div class="rsi-row">
+        <span class="rsi-label">RSI-14</span>
+        <span class="rsi-val ${rsiCls}">${c.rsi.toFixed(1)}</span>
+        </div>
+        <span class="timestamp">${dtStr} - ${endDtStr} SGT</span>
+    </div>`;
+}
+
 function renderProbs(probs) {
     const dirs = ['down', 'flat', 'up'];
     return dirs.map((dir, idx) => {
@@ -108,6 +151,17 @@ function renderPredictions(p) {
         </div>
         <div class="prob-rows">${renderProbs(p.nnProbs)}</div>
     </div>
+
+    <div class="model-block">
+        <div class="model-header">
+        <span class="model-name">XGBoost · H1</span>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <span class="model-ver">v${p.xgbH1ModelVersion}</span>
+            <span class="pred-pill ${p.xgbH1Pred}">${["DOWN", "FLAT", "UP"][Number(p.xgbH1Pred)]}</span>
+        </div>
+        </div>
+        <div class="prob-rows">${renderProbs(p.xgbH1Probs)}</div>
+    </div>
     `;
 }
 
@@ -125,27 +179,30 @@ async function runInference() {
     setStatus('Connecting to Railway...');
 
     try {
-    const [candleRes, predRes] = await Promise.all([
-        fetch(`${API_BASE}/candle`),
-        fetch(`${API_BASE}/predict`)
-    ]);
+        const [candleRes, predRes, candleH1Res] = await Promise.all([
+            fetch(`${API_BASE}/candle`),
+            fetch(`${API_BASE}/predict`),
+            fetch(`${API_BASE}/candle/h1`)
+        ]);
 
-    if (!candleRes.ok) throw new Error(`/candle returned ${candleRes.status}`);
-    if (!predRes.ok)   throw new Error(`/predict returned ${predRes.status}`);
+        if (!candleRes.ok)   throw new Error(`/candle returned ${candleRes.status}`);
+        if (!predRes.ok)     throw new Error(`/predict returned ${predRes.status}`);
+        if (!candleH1Res.ok) throw new Error(`/candle/h1 returned ${candleH1Res.status}`);
 
-    const candle = await candleRes.json();
-    const pred   = await predRes.json();
+        const candle   = await candleRes.json();
+        const pred     = await predRes.json();
+        const candleH1 = await candleH1Res.json();
 
-    renderCandle(candle);
-    renderPredictions(pred);
+        renderCandle(candle);
+        renderPredictions(pred);
+        renderCandleH1(candleH1);
 
-    const now = new Date().toLocaleTimeString('en-SG', { hour12: false });
-    setStatus(`Last updated ${now}`, 'ok');
-
+        const now = new Date().toLocaleTimeString('en-SG', { hour12: false });
+        setStatus(`Last updated ${now}`, 'ok');
     } catch (err) {
-    console.error(err);
-    setStatus(`Error: ${err.message}`, 'error');
+        console.error(err);
+        setStatus(`Error: ${err.message}`, 'error');
     } finally {
-    setLoading(false);
+        setLoading(false);
     }
 }
