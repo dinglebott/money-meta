@@ -19,9 +19,10 @@
 
   <main id="main-content">
 
+    <h2>H4 Timeframe</h2>
     <!-- Candle section -->
     <div>
-      <div class="section-label">Latest complete candle</div>
+      <div class="section-label">Latest full candle</div>
       <div class="candle-card" id="candle-card">
         <div class="empty-state"><p>Press run to fetch data</p></div>
       </div>
@@ -37,11 +38,22 @@
       </div>
     </div>
 
+    <h2>H1 Timeframe</h2>
     <!-- H1 Candle section -->
     <div>
-      <div class="section-label">Latest complete candle · H1</div>
+      <div class="section-label">Latest full candle</div>
       <div class="candle-card" id="candle-h1-card">
         <div class="empty-state"><p>Press run to fetch data</p></div>
+      </div>
+    </div>
+
+    <!-- H1 Prediction section -->
+    <div>
+      <div class="section-label">Model predictions</div>
+      <div style="display:flex; flex-direction:column; gap:12px;" id="pred-container-h1">
+        <div class="model-block">
+          <div class="empty-state"><p>Awaiting inference</p></div>
+        </div>
       </div>
     </div>
 

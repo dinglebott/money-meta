@@ -5,6 +5,7 @@ const statusEl  = document.getElementById('status-text');
 const candleEl  = document.getElementById('candle-card');
 const predEl    = document.getElementById('pred-container');
 const candleH1El = document.getElementById('candle-h1-card');
+const predH1El    = document.getElementById('pred-container-h1');
 
 function setStatus(msg, type = '') {
     statusEl.textContent = msg;
@@ -151,10 +152,12 @@ function renderPredictions(p) {
         </div>
         <div class="prob-rows">${renderProbs(p.nnProbs)}</div>
     </div>
+    `;
 
+    predH1El.innerHTML = `
     <div class="model-block">
         <div class="model-header">
-        <span class="model-name">XGBoost · H1</span>
+        <span class="model-name">XGBoost</span>
         <div style="display:flex; align-items:center; gap:8px;">
             <span class="model-ver">v${p.xgbH1ModelVersion}</span>
             <span class="pred-pill ${p.xgbH1Pred}">${["DOWN", "FLAT", "UP"][Number(p.xgbH1Pred)]}</span>
