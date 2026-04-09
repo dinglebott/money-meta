@@ -11,6 +11,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 xgbVersion = 10
 nnVersion = 5.4
 xgbH1Version = 10.1
+nnH1Version = 5.5
 
 class ForexHybrid(torch.nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, dropout, lstm_dropout, output_size,
@@ -49,17 +50,21 @@ class ForexHybrid(torch.nn.Module):
 xgbModel = None
 nnModel = None
 xgbH1Model = None
+nnH1Model = None
 scaler = None
+scalerH1 = None
 
 def loadModels():
-    global xgbModel, nnModel, xgbH1Model, scaler
-    # load xgb
+    global xgbModel, nnModel, xgbH1Model, nnH1Model, scaler, scalerH1
+    # load H4 xgb
     xgbModel = xgb.XGBClassifier()
     xgbModel.load_model(ARTIFACTS / f"XGBoost_EUR_USD_H4_2026_v{xgbVersion}.json")
+
+    # load H1 xgb
     xgbH1Model = xgb.XGBClassifier()
     xgbH1Model.load_model(ARTIFACTS / f"XGBoost_EUR_USD_H1_2026_v{xgbH1Version}.json")
 
-    # load nn
+    # load H4 nn
     with open(ARTIFACTS / f"nnFeatures_v{nnVersion}.json", "r") as file:
         nnFeatures = json.load(file)["features"]
     with open(ARTIFACTS / f"nnHyperparameters_v{nnVersion}.json", "r") as file:
@@ -75,7 +80,23 @@ def loadModels():
     nnModel.eval()
     scaler = joblib.load(ARTIFACTS / f"scaler_v{nnVersion}.pkl")
 
-def predict(xgbFeaturesDf, nnFeaturesDf, xgbH1FeaturesDf) -> dict:
+    # load H1 nn
+    with open(ARTIFACTS / f"nnFeatures_v{nnH1Version}.json", "r") as file:
+        nnH1Features = json.load(file)["features"]
+    with open(ARTIFACTS / f"nnHyperparameters_v{nnH1Version}.json", "r") as file:
+        nnH1Hyperparams = json.load(file)["modelParams"]
+    
+    nnH1Model = ForexHybrid(
+        **nnH1Hyperparams,
+        input_size=len(nnH1Features),
+        output_size=3,
+        lstm_dropout=nnH1Hyperparams["dropout"]
+    ).to(DEVICE)
+    nnH1Model.load_state_dict(torch.load(ARTIFACTS / f"NN_EUR_USD_H1_2026_v{nnH1Version}.pth", map_location=DEVICE))
+    nnH1Model.eval()
+    scalerH1 = joblib.load(ARTIFACTS / f"scaler_v{nnH1Version}.pkl")
+
+def predict(xgbFeaturesDf, nnFeaturesDf, xgbH1FeaturesDf, nnH1FeaturesDf) -> dict:
     # xgb prediction
     latestCandle = xgbFeaturesDf.iloc[[-1]]
     xgbPred = xgbModel.predict(latestCandle)[0]
@@ -89,8 +110,8 @@ def predict(xgbFeaturesDf, nnFeaturesDf, xgbH1FeaturesDf) -> dict:
     # build nn sequence
     nnFeatures = scaler.transform(nnFeaturesDf)
     X = []
-    for i in range(len(nnFeatures) - 20 + 1):
-        X.append(nnFeatures[i : i + 20])
+    for i in range(len(nnFeatures) - 45 + 1):
+        X.append(nnFeatures[i : i + 45])
     X = torch.tensor(np.array(X), dtype=torch.float32, device=DEVICE)
     # run inferences
     with torch.no_grad():
@@ -115,11 +136,32 @@ def predict(xgbFeaturesDf, nnFeaturesDf, xgbH1FeaturesDf) -> dict:
         "2": xgbH1Probs[2]
     }
 
+    # build H1 nn sequence
+    nnH1Features = scalerH1.transform(nnH1FeaturesDf)
+    XH1 = []
+    for i in range(len(nnH1Features) - 40 + 1):
+        XH1.append(nnH1Features[i : i + 40])
+    XH1 = torch.tensor(np.array(XH1), dtype=torch.float32, device=DEVICE)
+    # run inferences
+    with torch.no_grad():
+        logitsH1 = nnH1Model(XH1[-2:])
+        allNnProbsH1 = torch.softmax(logitsH1, dim=1).cpu().numpy()
+        allNnPredsH1 = torch.argmax(logitsH1, dim=1).cpu().numpy()
+    nnH1Pred = allNnPredsH1[-1]
+    nnH1Probs = allNnProbsH1[-1]
+    nnH1ProbsDict = {
+        "0": nnH1Probs[0],
+        "1": nnH1Probs[1],
+        "2": nnH1Probs[2]
+    }
+
     return {
         "xgbPred": str(int(xgbPred)),
         "xgbProbs": xgbProbsDict,
         "nnPred": str(int(nnPred)),
         "nnProbs": nnProbsDict,
         "xgbH1Pred": str(int(xgbH1Pred)),
-        "xgbH1Probs": xgbH1ProbsDict
+        "xgbH1Probs": xgbH1ProbsDict,
+        "nnH1Pred": str(int(nnH1Pred)),
+        "nnH1Probs": nnH1ProbsDict
     }

@@ -14,6 +14,7 @@ ARTIFACTS = Path("artifacts")
 xgbVersion = 10
 nnVersion = 5.4
 xgbH1Version = 10.1
+nnH1Version = 5.5
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -45,6 +46,8 @@ assert (ARTIFACTS / f"nnFeatures_v{nnVersion}.json").exists(), \
     f"NN feature list not found for version {nnVersion}"
 assert (ARTIFACTS / f"xgbFeatures_v{xgbH1Version}.json").exists(), \
     f"XGB feature list not found for version {xgbH1Version}"
+assert (ARTIFACTS / f"nnFeatures_v{nnH1Version}.json").exists(), \
+    f"NN feature list not found for version {nnH1Version}"
 
 @app.get("/health")
 def health():
@@ -58,24 +61,28 @@ def getPrediction():
         nnFeatureList = json.load(file)["features"]
     with open(ARTIFACTS / f"xgbFeatures_v{xgbH1Version}.json", "r") as file:
         xgbH1FeatureList = json.load(file)["features"]
+    with open(ARTIFACTS / f"nnFeatures_v{nnH1Version}.json", "r") as file:
+        nnH1FeatureList = json.load(file)["features"]
 
     try:
-        jsonData, timestamp = getData("EUR_USD", "H4", 400)
+        jsonData, timestamp = getData("EUR_USD", "H4", 500)
         featuresDf = parseData(jsonData)
         xgbFeaturesDf = featuresDf[xgbFeatureList]
         nnFeaturesDf = featuresDf[nnFeatureList]
 
-        jsonDataH1, timestampH1 = getData("EUR_USD", "H1", 400)
+        jsonDataH1, _ = getData("EUR_USD", "H1", 500)
         featuresDfH1 = parseData(jsonDataH1)
         xgbH1FeaturesDf = featuresDfH1[xgbH1FeatureList]
+        nnH1FeaturesDf = featuresDfH1[nnH1FeatureList]
 
-        result = predict(xgbFeaturesDf, nnFeaturesDf, xgbH1FeaturesDf)
+        result = predict(xgbFeaturesDf, nnFeaturesDf, xgbH1FeaturesDf, nnH1FeaturesDf)
         return PredictionResponse(
             **result,
             timestamp=timestamp,
             xgbModelVersion=f"{xgbVersion}",
             nnModelVersion=f"{nnVersion}",
-            xgbH1ModelVersion=f"{xgbH1Version}"
+            xgbH1ModelVersion=f"{xgbH1Version}",
+            nnH1ModelVersion = f"{nnH1Version}"
         )
     except Exception as e:
         logger.error(f"Prediction failed: {e}")
@@ -84,7 +91,7 @@ def getPrediction():
 @app.get("/candle", response_model=CandleInfo)
 def getCandleInfo():
     try:
-        jsonData, timestamp = getData("EUR_USD", "H4", 400)
+        jsonData, timestamp = getData("EUR_USD", "H4", 500)
         df = parseData(jsonData) # incomplete candle dropped already
         lastCompleteCandle = df.iloc[-1]
         return CandleInfo(

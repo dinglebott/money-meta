@@ -165,6 +165,17 @@ function renderPredictions(p) {
         </div>
         <div class="prob-rows">${renderProbs(p.xgbH1Probs)}</div>
     </div>
+
+    <div class="model-block">
+        <div class="model-header">
+        <span class="model-name">CNN-LSTM</span>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <span class="model-ver">v${p.nnH1ModelVersion}</span>
+            <span class="pred-pill ${p.nnH1Pred}">${["DOWN", "FLAT", "UP"][Number(p.nnH1Pred)]}</span>
+        </div>
+        </div>
+        <div class="prob-rows">${renderProbs(p.nnH1Probs)}</div>
+    </div>
     `;
 }
 

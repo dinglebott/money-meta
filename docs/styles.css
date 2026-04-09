@@ -77,6 +77,11 @@ main {
     margin: 0 auto;
 }
 
+.timeframe-header {
+    font-family: var(--mono);
+    color: var(--muted);
+}
+
 /* ── Section label ── */
 .section-label {
     font-family: var(--mono);

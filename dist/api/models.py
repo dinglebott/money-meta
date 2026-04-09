@@ -7,10 +7,13 @@ class PredictionResponse(BaseModel):
     nnProbs: dict[str, float]
     xgbH1Pred: str
     xgbH1Probs: dict[str, float]
+    nnH1Pred: str
+    nnH1Probs: dict[str, float]
     timestamp: str
     xgbModelVersion: str
     nnModelVersion: str
     xgbH1ModelVersion: str
+    nnH1ModelVersion: str
 
 class CandleInfo(BaseModel):
     open: float
