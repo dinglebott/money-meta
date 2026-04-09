@@ -144,14 +144,14 @@ main {
     gap: 8px;
 }
 
-.rsi-label {
+.rsi-label, .atr-label {
     font-family: var(--mono);
     font-size: 10px;
     color: var(--muted);
     letter-spacing: 0.08em;
 }
 
-.rsi-val {
+.rsi-val, .atr-val {
     font-family: var(--mono);
     font-size: 13px;
     font-weight: 500;

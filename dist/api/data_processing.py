@@ -96,6 +96,7 @@ def parseData(jsonData):
         (df["low"]  - df["close"].shift(1)).abs()
     ], axis=1).max(axis=1) # greatest of 3 values
     df["atr_14"] = trueRange.rolling(14).mean() / df["close"]
+    df["raw_atr"] = trueRange.ewm(alpha=1/14, adjust=False).mean() # for display
     df["volatility_regime"] = df["atr_14"] / df["atr_14"].rolling(50).mean()
     # Bollinger bands
     bb_mid = df["close"].rolling(20).mean()
