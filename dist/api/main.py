@@ -93,7 +93,6 @@ def getCandleInfo():
             low=lastCompleteCandle["low"].item(),
             close=lastCompleteCandle["close"].item(),
             rsi=lastCompleteCandle["rsi_14"].item() + 50.0,
-            atr=lastCompleteCandle["raw_atr"].item(),
             timestamp=timestamp
         )
     except Exception as e:
@@ -112,7 +111,6 @@ def getCandleInfoH1():
             low=lastCompleteCandle["low"].item(),
             close=lastCompleteCandle["close"].item(),
             rsi=lastCompleteCandle["rsi_14"].item() + 50.0,
-            atr=lastCompleteCandle["raw_atr"].item(),
             timestamp=timestamp
         )
     except Exception as e:

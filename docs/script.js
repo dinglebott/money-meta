@@ -65,8 +65,6 @@ function renderCandle(c) {
         <div class="rsi-row">
         <span class="rsi-label">RSI-14</span>
         <span class="rsi-val ${rsiCls}">${c.rsi.toFixed(1)}</span>
-        <span class="atr-label">ATR-14</span>
-        <span class="atr-val">${c.atr.toFixed(1)}</span>
         </div>
         <span class="timestamp">${dtStr} - ${endDtStr} SGT</span>
     </div>
@@ -110,8 +108,6 @@ function renderCandleH1(c) {
         <div class="rsi-row">
         <span class="rsi-label">RSI-14</span>
         <span class="rsi-val ${rsiCls}">${c.rsi.toFixed(1)}</span>
-        <span class="atr-label">ATR-14</span>
-        <span class="atr-val">${c.atr.toFixed(1)}</span>
         </div>
         <span class="timestamp">${dtStr} - ${endDtStr} SGT</span>
     </div>`;
