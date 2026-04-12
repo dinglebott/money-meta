@@ -1,5 +1,5 @@
 ## About project
-Goal: Predict the direction of future price movements in forex markets with machine learning\
+Goal: Predict the direction of forex prices with machine learning models\
 This is part 3 of the whole forex prediction project, where I deploy the models from parts 1 and 2 in a coherent package. See below for the rest of the project.\
 *See DOCS.md for detailed results and workflow*\
 <br/>
@@ -16,7 +16,6 @@ The `custom_modules` folder contains helper functions to fetch and manipulate th
 `diagnostics.py` has functions to output the probability distributions of the models on 2024-2025 data, separated by true/false predictions. These can be used as benchmarks/thresholds to compare probabilities of live predictions against.\
 The `dist` folder contains a Dockerfile and FastAPI setup, along with all the models and other dependencies.\
 The `docs` folder contains the HTML file and other components for a PWA deployment.\
-*Both those folders were almost 100% Claude, don't ask me how they work.*\
 `nnTrainer.py`, `xgbTrainer.py`, and `train_model` are deprecated (see explanatory note above). They were originally used to get leak-free predictions for training the meta-model.\
 <br/>
 
