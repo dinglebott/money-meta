@@ -3,8 +3,11 @@ Goal: Predict the direction of forex prices with machine learning models\
 This is part 3 of the whole forex prediction project, where I deploy the models from parts 1 and 2 in a coherent package. See below for the rest of the project.\
 *See DOCS.md for detailed results and workflow*\
 <br/>
+Check out the other parts of my forex prediction project!\
 Part 1: [trading-trees](https://github.com/dinglebott/trading-trees), using a tree-based architecture (XGBoost)\
 Part 2: [noisy-neurons](https://github.com/dinglebott/noisy-neurons), using neural networks (LSTM + CNN)\
+Part 4: [moment-fx](https://github.com/dinglebott/moment-fx), further research with MOMENT foundation model\
+Part 5: [kronos-fx](https://github.com/dinglebott/kronos-fx), further research with Kronos foundation model\
 
 #### IMPORTANT:
 This repo was originally intended to be a meta-model that synthesises probabilities from the XGBoost and LSTM models. However, it SUCKS. So I have repurposed it into a deployment repo that pushes it to a website. Many of the files in the repo are relics of that attempt.\
