@@ -15,10 +15,10 @@ This repo was originally intended to be a meta-model that synthesises probabilit
 
 ## Project structure
 The main code is all in the top-level scripts.\
-The `custom_modules` folder contains helper functions to fetch and manipulate the data.\
+The `custom_modules/` folder contains helper functions to fetch and manipulate the data.\
 `diagnostics.py` has functions to output the probability distributions of the models on 2024-2025 data, separated by true/false predictions. These can be used as benchmarks/thresholds to compare probabilities of live predictions against.\
-The `dist` folder contains a Dockerfile and FastAPI setup, along with all the models and other dependencies.\
-The `docs` folder contains the HTML file and other components for a PWA deployment.\
+The `dist/` folder contains a Dockerfile and FastAPI setup, along with all the models and other dependencies.\
+The `docs/` folder contains the HTML file and other components for a PWA deployment.\
 `nnTrainer.py`, `xgbTrainer.py`, and `train_model` are deprecated (see explanatory note above). They were originally used to get leak-free predictions for training the meta-model.\
 <br/>
 
