@@ -1,3 +1,9 @@
+# This project is deprecated
+This is part of an older project. See [the-golden-candle](https://github.com/dinglebott/the-golden-candle) for the latest, most comprehensive one.\
+The other repositories in this project have been made private. This one remains public to maintain access to the deployment website for my older models.\
+The rest of the repository has been preserved as-is.\
+<br/>
+
 ## About project
 Goal: Predict the direction of forex prices with machine learning models\
 This is part 3 of the whole forex prediction project, where I deploy the models from parts 1 and 2 in a coherent package. See below for the rest of the project.\
