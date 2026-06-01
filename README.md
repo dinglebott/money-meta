@@ -2,6 +2,7 @@
 This is part of an older project. See [the-golden-candle](https://github.com/dinglebott/the-golden-candle) for the latest, most comprehensive one.\
 The other repositories in this project have been made private. This one remains public to maintain access to the deployment website for my older models.\
 The rest of the repository has been preserved as-is.\
+UPDATE: As of 1 Jun 2026 the website service is no longer online.\
 <br/>
 
 ## About project
